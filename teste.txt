@@ -1,0 +1,50 @@
+import express from "express";
+import fs from "fs";
+import readline from "readline";
+import ytdl from "ytdl-core";
+import ffmpeg from "fluent-ffmpeg";
+import cp from "child_process";
+
+import { promisify } from "util";
+const getStat = promisify(fs.stat);
+const app = express();
+
+app.use(express.static("public"));
+
+const highWaterMark = 2;
+
+app.get("/audio", async (req, res) => {
+  // const filePath = "../audio.mp3";
+  let id = "U5BGX_7ucEQ";
+  // const stat = await getStat(filePath);
+
+  let stream = ytdl(id, {
+    quality: "highestaudio",
+  });
+
+  res.writeHead(200, {
+    "Content-Type": "audio/mp3",
+    // "Content-Length": stream._readableState.highWaterMark,
+  });
+  let start = Date.now();
+  ffmpeg(stream)
+    .audioBitrate(128)
+    .save(`../${id}.mp3`)
+    .on("progress", (p) => {
+      readline.cursorTo(process.stdout, 0);
+      process.stdout.write(`${p.targetSize}kb downloaded`);
+      if (p.targetSize > 300) {
+        const stream2 = fs.createReadStream(`../${id}.mp3`, { highWaterMark });
+
+        stream2.on("end", () => console.log("acabou"));
+
+        stream2.pipe(res);
+      }
+    })
+    .on("end", () => {
+      console.log(`\ndone, thanks - ${(Date.now() - start) / 1000}s`);
+    })
+    .toFormat("mp3");
+});
+
+app.listen(3000, () => console.log("app is running"));

@@ -1,6 +1,10 @@
 import YtSearch from "yt-search";
 import { youtubeDownloader as YouTubePlaylist } from "../services";
 import path from "path";
+import ytdl from "ytdl-core";
+import fs from "fs";
+import ffmpeg from "fluent-ffmpeg";
+import Stream from "stream";
 
 export default {
   async searchVideo(videoName: string, type: string) {
@@ -31,24 +35,45 @@ export default {
             }));
             break;
         }
-        const downloader = new YouTubePlaylist({
-          outputPath: path.resolve(__dirname, "..", "..", "downloads"),
-          ffmpegPath: path.resolve(
-            __dirname,
-            "..",
-            "ffmpeg",
-            "bin",
-            "ffmpeg.exe"
-          ),
-          maxParallelDownload: 1,
+        const videoStream = ytdl(
+          `http://www.youtube.com/watch?v=${list[0].videoId}`,
+          {
+            quality: "highestaudio",
+          }
+        ).pipe(fs.createWriteStream("video.mp4"));
+     
+        const command = ffmpeg(fs.createReadStream("video.mp4"), {
+          stdoutLines: 0,
+        })
+          .format("mp3")
+          .output("video.mp3")
+          .on("end", () => {
+            console.log("end");
+          })
+          .on("error", (err) => {
+            console.log(err);
+          });
+        process.nextTick(() => {
+          command.run();
         });
+        // const downloader = new YouTubePlaylist({
+        //   outputPath: path.resolve(__dirname, "..", "..", "downloads"),
+        //   ffmpegPath: path.resolve(
+        //     __dirname,
+        //     "..",
+        //     "ffmpeg",
+        //     "bin",
+        //     "ffmpeg.exe"
+        //   ),
+        //   maxParallelDownload: 1,
+        // });
 
-        const download = await downloader.download(
-          `${list[0].videoId}`,
-          `${list[0].videoId}.mp3`
-        );
+        // const download = await downloader.download(
+        //   `${list[0].videoId}`,
+        //   `${list[0].videoId}.mp3`
+        // );
 
-        if (!download) throw new Error("Falha no download!");
+        // if (!download) throw new Error("Falha no download!");
 
         return list;
       }
