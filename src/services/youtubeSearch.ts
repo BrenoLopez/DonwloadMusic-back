@@ -1,10 +1,4 @@
 import YtSearch from "yt-search";
-import { youtubeDownloader as YouTubePlaylist } from "../services";
-import path from "path";
-
-import ytdl from "ytdl-core";
-import pathFfmpeg from 'ffmpeg-static';
-import ffmpeg from "fluent-ffmpeg";
 
 export default {
   async searchVideo(videoName: string, type: string) {
@@ -35,25 +29,6 @@ export default {
             }));
             break;
         }
-             
-        // const downloader = new YouTubePlaylist({
-        //   outputPath: path.resolve(__dirname, "..", "..", "downloads"),
-        //   ffmpegPath: path.resolve(
-        //     __dirname,
-        //     "..",
-        //     "ffmpeg",
-        //     "bin",
-        //     "ffmpeg.exe"
-        //   ),
-        //   maxParallelDownload: 1,
-        // });
-
-        // const download = await downloader.download(
-        //   `${list[0].videoId}`,
-        //   `${list[0].videoId}.mp3`
-        // );
-
-        // if (!download) throw new Error("Falha no download!");
 
         return list;
       }

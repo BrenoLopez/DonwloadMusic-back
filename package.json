@@ -5,9 +5,9 @@
   "license": "MIT",
   "scripts": {
     "dev:server": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc src/**/*.ts"
+    "start": "tsc && node dist/server.js",
+    "build":"tsc"
   },
-  
   "dependencies": {
     "@types/ffmpeg-static": "^3.0.0",
     "@types/fluent-ffmpeg": "^2.1.16",
