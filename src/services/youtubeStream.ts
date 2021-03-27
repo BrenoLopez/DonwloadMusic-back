@@ -12,7 +12,7 @@ export default {
         );
         if (!!info) {
           const stream = ytdl(`http://www.youtube.com/watch?v=${videoId}`, {
-            highWaterMark: 128,
+            highWaterMark: 32,
             quality: "highestaudio",
           });
           cb.writeHead(200, {
