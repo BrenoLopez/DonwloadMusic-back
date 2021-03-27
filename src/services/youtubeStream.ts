@@ -25,7 +25,7 @@ export default {
             .audioBitrate("128k")
             .toFormat("mp3")
             .on("error", (error) => {
-              console.log(error);
+              cb.destroy(error);
             })
             .on("stderr", console.log)
             .on("end", () => {
