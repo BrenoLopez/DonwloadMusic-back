@@ -16,6 +16,7 @@ export default {
               image: item.image,
               timestamp: item.timestamp,
               author: item.author.name,
+              duration: item.seconds * 1000,
             }));
             break;
           case "playlist":
@@ -28,6 +29,7 @@ export default {
               author: item.author.name,
             }));
             break;
+            default: return 'Opção indisponivel!'
         }
 
         return list;
